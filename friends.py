@@ -12,10 +12,9 @@ import chardet
 
 st.title('Friends word study')
 
-def main(df):
+def main():
 	
-	
-	
+	df, subs = analyzesubs(selected_episode)
 	values = ['PUNCT', 'NUM', 'X', 'SYM']
 	
 	#drop rows that contain any value in the list
@@ -290,7 +289,5 @@ codes = ["ascii",
 
 if __name__ == "__main__":
 	selected_episode = select_episode()
-	df, subs = analyzesubs(selected_episode)
-	
-	main(df)
+	main()
 
