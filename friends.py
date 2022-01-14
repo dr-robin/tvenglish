@@ -123,12 +123,12 @@ def getencoding(selected_episode):
 	encode = encode['encoding']
 	return encode
 def loadsubs(selected_episode):
-	file = open(selected_episode, "rb")
-	enc = chardet.detect(file.read())
-	enc = enc['encoding']
-	st.write(enc)
-	file.close()
-	subs = pysrt.open(selected_episode,encoding=enc)
+	#file = open(selected_episode, "rb")
+	#enc = chardet.detect(file.read())
+	#enc = enc['encoding']
+	#st.write(enc)
+	#file.close()
+	subs = pysrt.open(selected_episode)
 	return subs
 	
 def analyzesubs(subs):
