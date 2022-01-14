@@ -42,10 +42,6 @@ def main(df):
 	col2 = st.metric('Verbs', df[df.pos == 'VERB'].base_word.nunique(),)
 	col3 = st.metric('Adjectives', df[df.pos == 'ADJ'].base_word.nunique(),)
 	
-	try:
-		plotbar(df)
-	except Exception as e:
-		pass
 	add_selectbox = st.sidebar.slider('Word mentions', min_value=1,max_value=100, value=5, step=1)
 	
 	df_level = pd.read_csv("cambridge_britisheng.csv")
@@ -56,6 +52,14 @@ def main(df):
 	
 	df = pd.merge(df_level, df, on='base_word', how='right')
 	
+	#plotpie(df)
+	plotbar(df)
+	
+	try:
+		plotbar(df)
+	except Exception as e:
+		st.write(e)
+		
 	try:
 		plotpie(df)
 	except:
@@ -119,10 +123,14 @@ def getencoding(selected_episode):
 	encode = encode['encoding']
 	return encode
 def loadsubs(selected_episode):
-	encode = getencoding(selected_episode)
-	subs =pysrt.open(selected_episode, encoding=encode)
-	
+	file = open(selected_episode, "rb")
+	enc = chardet.detect(file.read())
+	enc = enc['encoding']
+	st.write(enc)
+	file.close()
+	subs = pysrt.open(selected_episode,encoding=enc)
 	return subs
+	
 def analyzesubs(subs):
 	allsubs = [s.text for s in subs]
 	corpus = ''.join(allsubs)
@@ -165,7 +173,7 @@ def wordfamily():
 def plotpie(df):
 
 	# Pie chart, where the slices will be ordered and plotted counter-clockwise:
-	labels = ['A1','A2','B1','B2','C1','C2']
+	labels = df.level.dropna().unique()
 	sizes = df.groupby('level')['mentions'].sum()
 	#explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
 
@@ -176,10 +184,15 @@ def plotpie(df):
 	return st.pyplot(fig1)
 
 def plotbar(df):
-	y = df.groupby('level')['mentions'].sum()
-	labels = ['A1','A2','B1','B2','C1','C2']
+	y = df['level'].dropna().value_counts()
+	#st.write(y)
+	labels = df.level.dropna().unique()
+	#st.write(labels)
 	chart_data = pd.DataFrame(y,columns=labels)
-
+	#st.write(chart_data)
+	#chart_data = pd.DataFrame(
+	#np.random.randn(50, 3),
+	#columns=["a", "b", "c"])
 	return st.bar_chart(chart_data)
 
     
